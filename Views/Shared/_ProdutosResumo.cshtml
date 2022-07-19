@@ -1,0 +1,7 @@
+﻿@model Produto 
+<div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+    <p><img src="@Model.ImagemUrl" width="320" height="205"/></p>
+    <h3>Preço: @Model.Preco.ToString("c")</h3>
+    <h4>@Model.Nome</h4>
+    <p>@Model.DescricaoCurta</p>
+</div>

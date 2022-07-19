@@ -7,6 +7,7 @@ namespace LDMConfeccoes.Context
     {
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Produto> Produtos { get; set; }
+        public DbSet<CarrinhoCompraItem> CarrinhoComprasItens { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }

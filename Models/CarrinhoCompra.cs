@@ -1,4 +1,5 @@
 ﻿using LDMConfeccoes.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace LDMConfeccoes.Models
 {
@@ -12,7 +13,7 @@ namespace LDMConfeccoes.Models
         }
 
         public string CarrinhoCompraID { get; set; }
-        public List<CarrinhoCompraItem> CarrinhoCompraItenss  { get; set; }
+        public List<CarrinhoCompraItem> CarrinhoCompraItens  { get; set; }
 
         public static CarrinhoCompra GetCarrinho(IServiceProvider services)
         {
@@ -33,6 +34,73 @@ namespace LDMConfeccoes.Models
             {
                 CarrinhoCompraID = carrinhoId
             };            
+        }
+        public void AdicionarAoCarrinho(Produto produto)
+        {
+            //verificar se item já existe
+            var carrinhoCompraItem = _context.CarrinhoComprasItens.SingleOrDefault(
+                s => s.Produto.ProdutoId == produto.ProdutoId &&
+                s.CarrinhoCompraId == CarrinhoCompraID);
+            if(carrinhoCompraItem == null) //item não exite
+            {
+                carrinhoCompraItem = new CarrinhoCompraItem
+                {
+                    CarrinhoCompraId = CarrinhoCompraID,
+                    Produto = produto,
+                    Quantidade = 1
+                };
+                _context.CarrinhoComprasItens.Add(carrinhoCompraItem);
+            }
+            else //item já existe
+            {
+                carrinhoCompraItem.Quantidade++;
+            }
+            _context.SaveChanges();
+        }
+        public int RemoverDoCarrinho (Produto produto)
+        {
+            var carrinhoCompraItem = _context.CarrinhoComprasItens.SingleOrDefault(
+                s => s.Produto.ProdutoId == produto.ProdutoId &&
+                s.CarrinhoCompraId== CarrinhoCompraID);
+
+            var quantidadeLocal = 0;
+
+            if(carrinhoCompraItem != null)
+            {
+                if(carrinhoCompraItem.Quantidade > 1)
+                {
+                    carrinhoCompraItem.Quantidade--;
+                    quantidadeLocal = carrinhoCompraItem.Quantidade;
+                }
+                else
+                {
+                    _context.CarrinhoComprasItens.Remove(carrinhoCompraItem);
+                }
+            }
+            _context.SaveChanges();
+            return quantidadeLocal;
+        }
+        public List<CarrinhoCompraItem> GetCarrinhoCompraItems()
+        {
+            return CarrinhoCompraItens ?? (CarrinhoCompraItens = _context.CarrinhoComprasItens
+                .Where(c => c.CarrinhoCompraId == CarrinhoCompraID)
+                .Include(s => s.Produto)
+                .ToList());  
+        }
+        public void LimparCarrinho()
+        {
+            var carrinhoItens = _context.CarrinhoComprasItens
+               .Where(c => c.CarrinhoCompraId == CarrinhoCompraID);
+            _context.CarrinhoComprasItens.RemoveRange(carrinhoItens);
+            _context.SaveChanges();
+        }
+        public decimal GetCarrinhoCompraTotal()
+        {
+            var total = _context.CarrinhoComprasItens
+                .Where(c => c.CarrinhoCompraId == CarrinhoCompraID)
+                .Select(c => c.Produto.Preco * c.Quantidade)
+                .Sum();
+            return total;
         }
     }
 }

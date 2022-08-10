@@ -23,7 +23,7 @@ namespace LDMConfeccoes.Models
             //obtém um serviço do tipo do nosso contexto
             var context = services.GetService<AppDbContext>();
 
-            //ontém ou gerao Id do carrinho
+            //contém ou gerao Id do carrinho
             string carrinhoId = session.GetString("CarrinhoId") ?? Guid.NewGuid ().ToString ();
 
             //atribui o id do carrinho da sessão

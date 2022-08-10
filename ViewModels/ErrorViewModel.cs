@@ -1,4 +1,4 @@
-namespace LDMConfeccoes.Models
+namespace LDMConfeccoes.ViewModels
 {
     public class ErrorViewModel
     {

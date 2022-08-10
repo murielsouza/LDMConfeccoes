@@ -1,4 +1,5 @@
 using LDMConfeccoes.Context;
+using LDMConfeccoes.Models;
 using LDMConfeccoes.Repositories;
 using LDMConfeccoes.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp)); //AddScoped gera uma instância a cada request
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
 
